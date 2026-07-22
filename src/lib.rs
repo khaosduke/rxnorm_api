@@ -1,90 +1,31 @@
 use std::collections::HashMap;
+use std::fmt::Write;
+
+mod constants;
+use constants::RXNORM_FUNCTIONS;
+
 
 pub fn add(left: u64, right: u64) -> u64 {
     left + right
 }
 
-static mut rx_func_map: HashMap<&&str,&&str> = rx_functions.iter().zip(rx_rest.iter()).collect();
+pub fn build_get_request<'a>(function: &'a str, options:&'a HashMap<&'a str,&'a str>) -> String {
+    
+    let opt_str = build_options_string(options);
+    println!("Got: {}",opt_str);
+    return opt_str;
+}
 
-const rx_functions: [&str;36] = [
-    "filterByProperty",
-    "findActiveProducts",
-    "findRelatedNDCs",
-    "findRxcuiById",
-    "findRxcuiByString",
-    "getAllConceptsByStatus",
-    "getAllConceptsByTTY",
-    "getAllHistoricalNDCs",
-    "getAllNDCsByStatus",
-    "getAllProperties",
-    "getAllRelatedInfo",
-    "getApproximateMatch",
-    "getDisplayTerms",
-    "getDrugs",
-    "getGenericProduct",
-    "getIdTypes",
-    "getMultiIngredBrand",
-    "getNDCProperties",
-    "getNDCStatus",
-    "getNDCs",
-    "getPropCategories",
-    "getPropNames",
-    "getProprietaryInformation",
-    "getReformulationConcepts",
-    "getRelaPaths",
-    "getRelaTypes",
-    "getRelatedByRelationship",
-    "getRelatedByType",
-    "getRxConceptProperties",
-    "getRxNormName",
-    "getRxNormVersion",
-    "getRxProperty",
-    "getRxcuiHistoryStatus",
-    "getSourceTypes",
-    "getSpellingSuggestions",
-    "getTermTypes"
-];
+fn build_options_string<'a>(options:&'a HashMap<&'a str,&'a str>) -> String {
+    let mut buffer = String::new();
 
-const rx_rest:[&str;36] = [  
-    "/rxcui/rxcui/filter",
-    "/rxcui/rxcui/active",
-    "/relatedndc",
-    "/rxcui?",
-    "/rxcui?",
-    "/allstatus",
-    "/allconcepts",
-    "/rxcui/rxcui/allhistoricalndcs",
-    "/allNDCstatus",
-    "/rxcui/rxcui/allProperties",
-    "/rxcui/rxcui/allrelated",
-    "/approximateTerm",
-    "/displaynames",
-    "/drugs",
-    "/rxcui/rxcui/generic",
-    "/idtypes",
-    "/brands",
-    "/ndcproperties",
-    "/ndcstatus",
-    "/rxcui/rxcui/ndcs",
-    "/propCategories",
-    "/propnames",
-    "/rxcui/rxcui/proprietary",
-    "/reformulationConcepts",
-    "/relapaths",
-    "/relatypes",
-    "/rxcui/rxcui/related?",
-    "/rxcui/rxcui/related?",
-    "/rxcui/rxcui/properties",
-    "/rxcui/rxcui",
-    "/version",
-    "/rxcui/rxcui/property",
-    "/rxcui/rxcui/historystatus",
-    "/sourcetypes",
-    "/spellingsuggestions",
-    "/termtypes"
-];
-
-const universal_parameters = ["format"];
+    for (key,value) in options {
+        let _ = write!(buffer,"{}={}&",key,value);
+    }
+    //Remove the last &
+    buffer.pop();
+    return buffer;
+}
 
 #[cfg(test)]
 mod tests {

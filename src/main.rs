@@ -1,6 +1,8 @@
 use rxnorm_api::add;
+use rxnorm_api::build_get_request;
 use reqwest::Client;
 use std::time::Duration;
+use std::collections::HashMap;
 
 
 #[tokio::main]
@@ -18,15 +20,23 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         // Build the client
         .build()?;
 
-    let domain = "https://rxnav.nlm.nih.gov"
-    let request_url = "/REST/rxcui.xml?name=yourName&allsrc=0or1&srclist=yourSources&search=0or1or2or9"
+    
+    //let request_url = "/REST/rxcui.xml?name=yourName&allsrc=0or1&srclist=yourSources&search=0or1or2or9";
 
     let response = client
         .get("https://httpbin.org/")
         .send()
         .await?;    
 
-    println!("Response: {:?}", response.text().await?);
+    //println!("Response: {:?}", response.text().await?);
+
+    let test_opt = HashMap::from([
+        ("foo","bar"),
+        ("fizz","buzz")
+    ]);
+
+    let test_opt_str = build_get_request("test",&test_opt);
+    println!("{:?}",test_opt_str);
 
     Ok(())
 }
