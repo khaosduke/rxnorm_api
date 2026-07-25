@@ -21,22 +21,26 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .build()?;
 
     
-    //let request_url = "/REST/rxcui.xml?name=yourName&allsrc=0or1&srclist=yourSources&search=0or1or2or9";
+
+
+    let test_opt = HashMap::from([
+        ("rxcui","1012407"),
+        //("format",".json")
+        //("propName","RXNAV_STR")
+    ]);
+
+
+    let test_opt_str = build_get_request("findActiveProducts",&test_opt).unwrap();
+
+    println!("{:?}",test_opt_str);
 
     let response = client
-        .get("https://httpbin.org/")
+        .get(test_opt_str)
         .send()
         .await?;    
 
-    //println!("Response: {:?}", response.text().await?);
 
-    let test_opt = HashMap::from([
-        ("foo","bar"),
-        ("fizz","buzz")
-    ]);
-
-    let test_opt_str = build_get_request("test",&test_opt);
-    println!("{:?}",test_opt_str);
+    println!("RESPONSE: {:?}",response.text().await?);
 
     Ok(())
 }
