@@ -8,7 +8,7 @@ pub enum RxNormError {
     InvalidResponse(String),
     InvalidFunctionOrOption,
     UnWrapError(String),
-    RXCUIExpected(String),
+    MissingRxcui(String),
     GenericError
 }
 
@@ -39,7 +39,7 @@ impl fmt::Display for RxNormError {
             RxNormError::GenericError => {
                 write!(f,"Dont know what happened")
             }
-            RxNormError::RXCUIExpected(function) => {
+            RxNormError::MissingRxcui(function) => {
                 write!(f,"{function} is a function which required RXCUI, None provided")    
             }
         }

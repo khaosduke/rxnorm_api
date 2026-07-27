@@ -24,7 +24,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let test_opt = HashMap::from([
         ("rxcui","1012407"),
         //("foo","bs")
-        ("format",".json")
+        ("format","xml")
         //("propName","RXNAV_STR")
     ]);
 
@@ -32,7 +32,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     //let function = "foo";    
     let test_opt_str = build_get_request(function,&test_opt)?;
 
-    println!("{:?}",test_opt_str);
+    println!("{:?}",test_opt_str.to_string());
 
     let response = client
         .get(test_opt_str)

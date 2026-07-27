@@ -1,72 +1,65 @@
 use std::collections::HashMap;
-use std::fmt::Write;
+use url::Url;
 
 mod constants;
+use constants::RXNORM_FUNCTIONS;
 
 mod error;
 pub use error::RxNormError;
 
 
+
 pub fn build_get_request<'a>(function: &'a str, 
                              options:&'a HashMap<&'a str,&'a str>)
-        -> Result<String,RxNormError> {
+        -> Result<Url,Box<dyn std::error::Error>> {
     
     //Don't even continue if function or options are invalid
     verify_function_name(function)?; 
     verify_options_hash(function,options)?; 
     
+    //Use Url crate to build url
+    //Start with the function template stored in constants and its associated acceptable options hash
+    let (path_template, _) = RXNORM_FUNCTIONS
+        .get(function)
+        .ok_or_else(|| RxNormError::InvalidFunction(function.to_owned()))?;        
+
+    let mut path = path_template.to_string();   
+
     //Since we might change options, and they arent that big we can copy to the heap
     let mut working_options = options.clone();
-
-
-    //Get the standard functions hashmap of options
-    let (std_rest_str,std_opts_hash) = 
-        constants::RXNORM_FUNCTIONS.get(function)
-                .ok_or(RxNormError::GenericError)?;
-
-    let mut final_route_str;    
-    if working_options.contains_key("format") {
-        let format = working_options.get("format")
-                    .ok_or(RxNormError::UnWrapError("format".to_string()))?;
-        final_route_str = format!("{}{}",std_rest_str.to_string(),format);
-    } else {
-        final_route_str = format!("{}.xml",std_rest_str.to_string());
-    }
-    let _ = working_options.remove("format");
-
+        
+    //Get the format, 
+    //Normalize, replace any "." in case its put in the format as ".json" or ".xml"
+    //Add "." in its proper place
+    path.push('.');
+    let format = working_options.get("format")
+                    .copied()
+                    .unwrap_or("xml");
+                    
+    path.push_str(format);
+                            
+    let _ = working_options.remove("format");                        
 
     //Check if its an rxcui encoded URL
-    if std_opts_hash.contains_key("rxcui") {
+    if is_rxcui_function(function) {  
         let rxcui = working_options.get("rxcui")
-                    .ok_or(RxNormError::RXCUIExpected(function.to_string()))?;
-
-        final_route_str = final_route_str.replace("{rxcui}",rxcui);
+                    .ok_or(RxNormError::MissingRxcui(function.to_string()))?;
+        path = path.replace("{rxcui}",rxcui);
         let _ = working_options.remove("rxcui");
     } 
 
-    let rest_str;
+    //Assemble final URL with request
+    let base = Url::parse(constants::RXNORM_DOMAIN)?;
+    let mut url = base.join(&path)?;
+
     if !working_options.is_empty() {
-        let opt_str = build_options_string(&working_options);
-        rest_str = format!("{}{}?{}",constants::RXNORM_DOMAIN,final_route_str,opt_str);
-    } else {
-        rest_str = format!("{}{}",constants::RXNORM_DOMAIN,final_route_str);
-    }    
-
-    println!("Got: {}",rest_str);
-    Ok(rest_str)
-}
-
-fn build_options_string<'a>(options:&'a HashMap<&'a str,&'a str>) -> String {
-    let mut buffer = String::new();
-
-    for (key,value) in options {
-        let _ = write!(buffer,"{}={}&",key,value);
+        let mut query = url.query_pairs_mut();
+        for (key,value) in working_options {
+            query.append_pair(key,value);
+        }
     }
-    //Remove the last &
-    buffer.pop();
-    return buffer;
+    Ok(url)
 }
-
 
 //VALIDATION FUNCTIONS
 fn verify_function_name<'a>(function: &'a str) 
@@ -89,7 +82,7 @@ fn verify_options_hash<'a>(function: &'a str,
     let is_rxcui = is_rxcui_function(function);
     if is_rxcui &&
        !options.contains_key(constants::RXCUI_PARAMETER) {
-        return Err(RxNormError::RXCUIExpected(function.to_string()))
+        return Err(RxNormError::MissingRxcui(function.to_string()))
        }
     
     //Check that the options in the supplied hash exist in the functions standard opts hash  
