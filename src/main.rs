@@ -24,7 +24,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let test_opt = HashMap::from([
         ("rxcui","1012407"),
         //("foo","bs")
-        ("format","xml")
+        ("format","json")
         //("propName","RXNAV_STR")
     ]);
 

@@ -30,10 +30,18 @@ pub fn build_get_request(function: &str,
     //Get the format
     //Add "." in its proper place
     path.push('.');
-    let format = working_options.get("format")
-                    .copied()
-                    .unwrap_or("xml");
-                    
+    let format = working_options
+        .get("format")
+        .copied()
+        .unwrap_or("xml")
+        .trim_start_matches('.');
+
+    if !matches!(format, "json" | "xml") {
+        return Err(RxNormError::InvalidFormat(
+            format.to_owned(),
+        ));
+    }        
+
     path.push_str(format);
                             
     let _ = working_options.remove("format");                        

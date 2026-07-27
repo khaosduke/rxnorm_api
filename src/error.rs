@@ -10,6 +10,7 @@ pub enum RxNormError {
     UnWrapError(String),
     MissingRxcui(String),
     Url(url::ParseError),
+    InvalidFormat(String),
     GenericError
 }
 
@@ -46,6 +47,10 @@ impl fmt::Display for RxNormError {
             RxNormError::Url(error) => {
                 write!(f, "Unable to build RxNorm URL: {error}")
             }
+            RxNormError::InvalidFormat(format) => {
+                write!(f,"Invalid format: {format}")
+            }
+
         }
     }
 }
