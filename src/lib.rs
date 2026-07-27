@@ -8,9 +8,8 @@ mod error;
 pub use error::RxNormError;
 
 
-
-pub fn build_get_request<'a>(function: &'a str, 
-                             options:&'a HashMap<&'a str,&'a str>)
+pub fn build_get_request(function: &str, 
+                             options:&HashMap<&str,&str>)
         -> Result<Url,RxNormError> {
     
     //Don't even continue if function or options are invalid
@@ -40,7 +39,7 @@ pub fn build_get_request<'a>(function: &'a str,
     let _ = working_options.remove("format");                        
 
     //Check if its an rxcui encoded URL
-    if is_rxcui_function(function) {  
+    if has_rxcui_path_parameter(function) {  
         let rxcui = working_options.get("rxcui")
                     .ok_or(RxNormError::MissingRxcui(function.to_string()))?;
         path = path.replace("{rxcui}",rxcui);
@@ -61,7 +60,7 @@ pub fn build_get_request<'a>(function: &'a str,
 }
 
 //VALIDATION FUNCTIONS
-fn verify_function_name<'a>(function: &'a str) 
+fn verify_function_name(function: &str) 
     -> Result<(), RxNormError> {
     if !constants::RXNORM_FUNCTIONS.contains_key(function) {
         return Err(RxNormError::InvalidFunction(function.to_string()));
@@ -69,8 +68,8 @@ fn verify_function_name<'a>(function: &'a str)
     Ok(())
 }
 
-fn verify_options_hash<'a>(function: &'a str, 
-                           options:&'a HashMap<&'a str,&'a str>) 
+fn verify_options_hash(function: &str, 
+                           options:&HashMap<&str,&str>) 
     -> Result<(),RxNormError> {
     //Get the function's options hash
     let (_,std_opt_hash) = constants::RXNORM_FUNCTIONS
@@ -78,7 +77,7 @@ fn verify_options_hash<'a>(function: &'a str,
                         .ok_or(RxNormError::UnWrapError(function.to_string()))?;
     
     //Save the result, does this function require RXCUI:
-    let is_rxcui = is_rxcui_function(function);
+    let is_rxcui = has_rxcui_path_parameter(function);
     if is_rxcui &&
        !options.contains_key(constants::RXCUI_PARAMETER) {
         return Err(RxNormError::MissingRxcui(function.to_string()))
@@ -98,7 +97,7 @@ fn verify_options_hash<'a>(function: &'a str,
     Ok(()) //Options are valid
 }
 
-fn is_rxcui_function<'a>(function: &'a str) -> bool {
+fn has_rxcui_path_parameter(function: &str) -> bool {
     //NOTE this should be safe because this is never run out of context of this lib
     let (_,std_opt_hash) = constants::RXNORM_FUNCTIONS
                         .get(function)
