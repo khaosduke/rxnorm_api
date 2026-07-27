@@ -3,6 +3,8 @@ use std::sync::LazyLock;
 
 
 pub const RXNORM_DOMAIN:&str = "https://rxnav.nlm.nih.gov";
+pub const FORMAT_PARAMETER:&str = "format";
+pub const RXCUI_PARAMETER:&str = "rxcui";
 
 /// Allowed values for one RxNorm API parameter.
 ///

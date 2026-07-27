@@ -5,6 +5,7 @@ use std::time::Duration;
 use std::collections::HashMap;
 
 
+
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let result = add(5, 3);
@@ -25,12 +26,14 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let test_opt = HashMap::from([
         ("rxcui","1012407"),
-        //("format",".json")
+        //("foo","bs")
+        ("format",".json")
         //("propName","RXNAV_STR")
     ]);
 
-
-    let test_opt_str = build_get_request("findActiveProducts",&test_opt).unwrap();
+    let function = "findActiveProducts";
+    //let function = "foo";    
+    let test_opt_str = build_get_request(function,&test_opt)?;
 
     println!("{:?}",test_opt_str);
 
