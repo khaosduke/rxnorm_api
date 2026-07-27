@@ -61,6 +61,7 @@ pub fn build_get_request(function: &str,
     if !working_options.is_empty() {
         let mut query = url.query_pairs_mut();
         for (key,value) in working_options {
+            //RxNorm api has a bug where the server will not accept RFC 3986 encoded strings
             query.append_pair(key,value);
         }
     }

@@ -41,6 +41,49 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
 
     println!("RESPONSE: {:?}",response.text().await?);
+    
+    //Concept
+    let drug = "fentanyl";
+    let drug_rxcui = "4337";
+
+    let drug_function = "findRxcuiByString";
+    let drug_related_by_type_function = "getRelatedByType";
+
+    let findrxcui_ops = HashMap::from([
+        ("name",drug),
+        ("format","json"),
+        ("search","2")
+    ]);
+
+    let relatedbytype_ops = HashMap::from([
+        ("rxcui",drug_rxcui),
+        ("format","json"),
+        ("tty","SCD+SBD+SCDG+SBDG")
+    ]);
+
+    let drug_resp = client
+        .get(build_get_request(drug_function,&findrxcui_ops)?)
+        .send()
+        .await?;
+    println!("Drug Response: {:?}",drug_resp.text().await?);    
+
+
+
+    let related_str = build_get_request(drug_related_by_type_function,&relatedbytype_ops)?;
+    println!("TO GET: {:?}",related_str.to_string());
+    let relatedbytype_resp = client
+        .get(related_str)
+        .send()
+        .await?;
+    println!("Related by type: {:?}",relatedbytype_resp.text().await?);
+    
+    
+
+
+
+
+
+
 
     Ok(())
 }
