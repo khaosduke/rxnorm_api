@@ -1,6 +1,8 @@
 mod request;
 mod constants;
-pub mod error;
+mod validators;
+
+pub mod errors;
 
 pub use request::build_get_request;
 
