@@ -9,6 +9,7 @@ pub enum RxNormError {
     InvalidFunctionOrOption,
     UnWrapError(String),
     MissingRxcui(String),
+    Url(url::ParseError),
     GenericError
 }
 
@@ -42,8 +43,15 @@ impl fmt::Display for RxNormError {
             RxNormError::MissingRxcui(function) => {
                 write!(f,"{function} is a function which required RXCUI, None provided")    
             }
+            RxNormError::Url(error) => {
+                write!(f, "Unable to build RxNorm URL: {error}")
+            }
         }
     }
 }
-
+impl From<url::ParseError> for RxNormError {
+    fn from(error: url::ParseError) -> Self {
+        Self::Url(error)
+    }
+}
 impl std::error::Error for RxNormError {}

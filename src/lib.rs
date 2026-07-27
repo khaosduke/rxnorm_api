@@ -11,7 +11,7 @@ pub use error::RxNormError;
 
 pub fn build_get_request<'a>(function: &'a str, 
                              options:&'a HashMap<&'a str,&'a str>)
-        -> Result<Url,Box<dyn std::error::Error>> {
+        -> Result<Url,RxNormError> {
     
     //Don't even continue if function or options are invalid
     verify_function_name(function)?; 
