@@ -170,7 +170,7 @@ pub static RXNORM_FUNCTIONS: LazyLock<HashMap<&'static str, FunctionDefinition>>
                 ]),
             )),
             ("getProprietaryInformation", (
-                "/REST/proprietary",
+                "/REST/rxcui/{rxcui}/proprietary",
                 HashMap::from([
                     ("rxcui", Vec::new()),
                     ("type", Vec::new()),
