@@ -7,20 +7,13 @@ mod error;
 pub use error::RxNormError;
 
 
-pub fn add(left: u64, right: u64) -> u64 {
-    left + right
-}
-
 pub fn build_get_request<'a>(function: &'a str, 
                              options:&'a HashMap<&'a str,&'a str>)
         -> Result<String,RxNormError> {
     
     //Don't even continue if function or options are invalid
-    if !verify_function_name(function)? ||
-       !verify_options_hash(function,options)? {
-       return Err(RxNormError::InvalidFunctionOrOption);
-    }
-    
+    verify_function_name(function)?; 
+    verify_options_hash(function,options)?; 
     
     //Since we might change options, and they arent that big we can copy to the heap
     let mut working_options = options.clone();
@@ -74,35 +67,51 @@ fn build_options_string<'a>(options:&'a HashMap<&'a str,&'a str>) -> String {
     return buffer;
 }
 
+
+//VALIDATION FUNCTIONS
 fn verify_function_name<'a>(function: &'a str) 
-    -> Result<bool, RxNormError> {
+    -> Result<(), RxNormError> {
     if !constants::RXNORM_FUNCTIONS.contains_key(function) {
         return Err(RxNormError::InvalidFunction(function.to_string()));
     }
-    Ok(true)
+    Ok(())
 }
 
 fn verify_options_hash<'a>(function: &'a str, 
                            options:&'a HashMap<&'a str,&'a str>) 
-    -> Result<bool,RxNormError> {
+    -> Result<(),RxNormError> {
     //Get the function's options hash
     let (_,std_opt_hash) = constants::RXNORM_FUNCTIONS
                         .get(function)
                         .ok_or(RxNormError::UnWrapError(function.to_string()))?;
     
+    //Save the result, does this function require RXCUI:
+    let is_rxcui = is_rxcui_function(function);
+    if is_rxcui &&
+       !options.contains_key(constants::RXCUI_PARAMETER) {
+        return Err(RxNormError::RXCUIExpected(function.to_string()))
+       }
+    
     //Check that the options in the supplied hash exist in the functions standard opts hash  
     for (parameter,_) in options {
-        //Ignore format and rxcui
-        if *parameter == constants::FORMAT_PARAMETER ||
-           *parameter == constants::RXCUI_PARAMETER {
+        //Ignore format
+        if *parameter == constants::FORMAT_PARAMETER {
             continue;
-           }
+        }
         //Error out if there is an invalid option parameter
         if !std_opt_hash.contains_key(parameter) {
             return Err(RxNormError::InvalidOptions(parameter.to_string()));
         }   
     }                    
-    Ok(true) //Options are valid
+    Ok(()) //Options are valid
+}
+
+fn is_rxcui_function<'a>(function: &'a str) -> bool {
+    //NOTE this should be safe because this is never run out of context of this lib
+    let (_,std_opt_hash) = constants::RXNORM_FUNCTIONS
+                        .get(function)
+                        .unwrap(); 
+     return std_opt_hash.contains_key("rxcui");                   
 }
 
 #[cfg(test)]

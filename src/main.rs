@@ -1,4 +1,3 @@
-use rxnorm_api::add;
 use rxnorm_api::build_get_request;
 use reqwest::Client;
 use std::time::Duration;
@@ -8,9 +7,7 @@ use std::collections::HashMap;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let result = add(5, 3);
-    println!("The result is: {}", result);
-
+   
     let client = Client::builder()
         // Set a timeout for the entire request
         .timeout(Duration::from_secs(30))
