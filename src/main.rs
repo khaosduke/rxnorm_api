@@ -58,7 +58,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let relatedbytype_ops = HashMap::from([
         ("rxcui",drug_rxcui),
         ("format","json"),
-        ("tty","SCD+SBD+SCDG+SBDG")
+        ("tty","SCD SBD SCDG SBDG")
     ]);
 
     let drug_resp = client
