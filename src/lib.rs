@@ -28,8 +28,7 @@ pub fn build_get_request<'a>(function: &'a str,
     //Since we might change options, and they arent that big we can copy to the heap
     let mut working_options = options.clone();
         
-    //Get the format, 
-    //Normalize, replace any "." in case its put in the format as ".json" or ".xml"
+    //Get the format
     //Add "." in its proper place
     path.push('.');
     let format = working_options.get("format")
