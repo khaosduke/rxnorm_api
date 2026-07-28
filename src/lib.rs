@@ -9,6 +9,7 @@ pub use request::build_request;
 mod request;
 mod constants;
 mod validators;
+mod endpoints;
 
 pub mod errors;
 
@@ -31,7 +32,7 @@ impl RxNormApi {
         
             Ok(Self { client })
     }
-
+    //pub(crate) async fn get(...)
     pub async fn get( &self, function: &str,  options:&HashMap<&str,&str>,)
                     -> Result<reqwest::Response, RxNormError> {
 
