@@ -1,24 +1,50 @@
 use reqwest::Client;
-use reqwest::Response;
+use std::time::Duration;
+use std::collections::HashMap;
+use crate::errors::RxNormError;
+
+pub use request::build_request;
+
 
 mod request;
 mod constants;
 mod validators;
 
 pub mod errors;
-pub use request::build_get_request;
 
+#[derive(Debug)]
 pub struct RxNormApi {
     client: reqwest::Client,
 }
 
 impl RxNormApi {
-    pub fn new() -> Self {
-        Self {
-            client: reqwest::Client::new(),
-        }
+    pub fn new() -> Result<Self, RxNormError>  {
+         let client = Client::builder()
+            // Set a timeout for the entire request
+            .timeout(Duration::from_secs(30))
+            // Set a timeout for establishing connections
+            .connect_timeout(Duration::from_secs(10))
+            //Library
+            .user_agent("RxNorm_API/1.0")
+            // Build the client
+            .build()?;
+        
+            Ok(Self { client })
     }
 
+    pub async fn get( &self, function: &str,  options:&HashMap<&str,&str>,)
+                    -> Result<reqwest::Response, RxNormError> {
+
+        let request_url = build_request(function,&options)?;
+        println!("TO GET: {:?}",request_url.to_string());
+        
+        let response = self.client
+        .get(request_url)
+        .send()
+        .await?;                
+    
+        Ok(response)
+}
     //pub fn get(function:&str, options&HashMap<&str,&str>) -> reqwest::Response {
         
     //}

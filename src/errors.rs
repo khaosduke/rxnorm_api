@@ -6,11 +6,12 @@ pub enum RxNormError {
     InvalidOptions(String),
     RequestFailed(String),
     InvalidResponse(String),
-    InvalidFunctionOrOption,
     UnWrapError(String),
     MissingRxcui(String),
     Url(url::ParseError),
     InvalidFormat(String),
+    Reqwest(reqwest::Error),
+    InvalidFunctionOrOption,
     GenericError
 }
 
@@ -51,6 +52,10 @@ impl fmt::Display for RxNormError {
                 write!(f,"Invalid format: {format}")
             }
 
+            RxNormError::Reqwest(err) => {
+                write!(f, "HTTP error: {}", err)
+            }
+
         }
     }
 }
@@ -59,4 +64,11 @@ impl From<url::ParseError> for RxNormError {
         Self::Url(error)
     }
 }
+
+impl From<reqwest::Error> for RxNormError {
+    fn from(err: reqwest::Error) -> Self {
+        RxNormError::Reqwest(err)
+    }
+}
+
 impl std::error::Error for RxNormError {}

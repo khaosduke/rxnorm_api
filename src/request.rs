@@ -12,7 +12,7 @@ use crate::constants::RXNORM_FUNCTIONS;
 use crate::errors::RxNormError;
 use crate::validators;
 
-pub fn build_get_request(function: &str, 
+pub fn build_request(function: &str, 
                              options:&HashMap<&str,&str>)
         -> Result<Url,RxNormError> {
     
