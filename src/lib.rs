@@ -33,7 +33,7 @@ impl RxNormApi {
             Ok(Self { client })
     }
     //pub(crate) async fn get(...)
-    pub async fn get( &self, function: &str,  options:&HashMap<&str,&str>,)
+    async fn get( &self, function: &str,  options:&HashMap<&str,&str>,)
                     -> Result<reqwest::Response, RxNormError> {
 
         let request_url = build_request(function,&options)?;
@@ -45,7 +45,8 @@ impl RxNormApi {
         .await?;                
     
         Ok(response)
-}
+    }
+
     //pub fn get(function:&str, options&HashMap<&str,&str>) -> reqwest::Response {
         
     //}

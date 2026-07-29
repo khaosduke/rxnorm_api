@@ -1,35 +1,27 @@
 use crate::{errors::RxNormError, RxNormApi};
 use std::collections::HashMap;
 
-
 impl RxNormApi {
-     pub async fn get_all_properties(
-         &self,
-         rxcui: &str,
-         options: &HashMap<&str,&str>,
-     ) -> Result<reqwest::Response, RxNormError> {
-        
-        let function = "getAllProperties";
+    pub async fn get_ndcs(
+        &self,
+        rxcui:&str,
+        options:&HashMap<&str,&str>,
+    ) -> Result<reqwest::Response, RxNormError> {
+        let function = "getNDCs";
 
         let mut working_options = options.clone();
         let _ = working_options.insert("rxcui",rxcui);
 
         let response= self.get(function,&working_options).await?;
-        
-        Ok(response)
-     }
-//
-//     pub async fn get_property(
+    }
+//     pub async fn display_terms(
 //         &self,
-//         rxcui: &str,
-//         property: &str,
 //     ) -> Result<reqwest::Response, RxNormError> {
 //
 //     }
 //
-//     pub async fn get_multi_ingred_brand(
+//     pub async fn display_names(
 //         &self,
-//         rxcui: &str,
 //     ) -> Result<reqwest::Response, RxNormError> {
 //
 //     }

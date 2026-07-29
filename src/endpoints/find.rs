@@ -1,6 +1,7 @@
 use crate::{errors::RxNormError, RxNormApi};
 use std::collections::HashMap;
-use rxnorm_api::validators::verify_options_hash;
+use crate::validators::verify_options_hash;
+
 
 impl RxNormApi {
      pub async fn find_rxcui_by_string(
@@ -11,10 +12,13 @@ impl RxNormApi {
 
         let mut working_options = options.clone();
         let _ = working_options.insert("name",name);
-
-        verify_options_hash("findRxcuiByString",&working_options)?;
+        //Can check that function name is correct but it should be if youre writing it within the API
+        let function = "findRxcuiByString";
+        //Everythings valid
+        verify_options_hash(function,&working_options)?;
+        let response= self.get(function,&working_options).await?;
         
-
+        Ok(response)
      }
 //
 //     pub async fn find_rxcui_by_id(

@@ -1,12 +1,6 @@
 use std::collections::HashMap;
 use url::Url;
 
-//mod constants;
-//use constants::RXNORM_FUNCTIONS;
-
-//mod error;
-//pub use error::RxNormError;
-
 use crate::constants;
 use crate::constants::RXNORM_FUNCTIONS;
 use crate::errors::RxNormError;
@@ -70,17 +64,4 @@ pub fn build_request(function: &str,
         }
     }
     Ok(url)
-}
-
-
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn it_works() {
-        let result = add(2, 2);
-        assert_eq!(result, 4);
-    }
 }
