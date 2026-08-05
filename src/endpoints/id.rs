@@ -1,12 +1,17 @@
 use crate::{errors::RxNormError, RxNormApi};
 
-// impl RxNormApi {
-//     pub async fn id_types(
-//         &self,
-//     ) -> Result<reqwest::Response, RxNormError> {
-//
-//     }
-//
+impl RxNormApi {
+     pub async fn get_id_types(
+         &self,
+         options: &std::collections::HashMap<&str,&str>
+     ) -> Result<reqwest::Response, RxNormError> {
+        
+        let function = "getIdTypes";
+
+        let response= self.get(function,&options).await?;
+        Ok(response)
+     }
+
 //     pub async fn get_rxcui_for_id(
 //         &self,
 //         id: &str,
@@ -14,4 +19,4 @@ use crate::{errors::RxNormError, RxNormApi};
 //     ) -> Result<reqwest::Response, RxNormError> {
 //
 //     }
-// }
+}
