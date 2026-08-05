@@ -17,5 +17,15 @@ impl RxNormApi {
         Ok(response)
     }
 
+    pub async fn get_ndc_properties(
+        &self,
+        options: &HashMap<&str,&str>
+    ) -> Result<reqwest::Response, RxNormError> {
+        
+        let function = "getNDCProperties";
+
+        let response= self.get(function,&options).await?;
+        Ok(response)
+    }
     
 }
