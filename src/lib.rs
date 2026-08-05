@@ -42,13 +42,11 @@ impl RxNormApi {
         let response = self.client
         .get(request_url)
         .send()
-        .await?;                
+        .await?
+        .error_for_status()?;              
     
         Ok(response)
     }
 
-    //pub fn get(function:&str, options&HashMap<&str,&str>) -> reqwest::Response {
-        
-    //}
 }
 
