@@ -60,4 +60,3 @@ impl RxNormApi {
 //     ) -> Result<reqwest::Response, RxNormError> {
 //
 //     }
-}
